@@ -1,4 +1,4 @@
-<img width="952" alt="image" src="https://github.com/kriskw1999/gpui-calculator/assets/71312948/54a29d00-ac43-4481-b569-982e8ca842e1">## Gpui Based Calculator
+## Gpui Based Calculator
 
 <img width="952" alt="image" src="https://github.com/kriskw1999/gpui-calculator/assets/71312948/1bfc2f8f-98ed-4d20-93e5-0090ab2ac0e2">
 
