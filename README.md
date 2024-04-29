@@ -24,3 +24,7 @@ Be sure to have rust installed on your machine. You can install rust by followin
 cargo fetch
 cargo run
 ```
+
+## Help
+
+If you spot any possible improvement or cleanup that can be done, please feel free to open an issue or a pull request or even a discussion.
