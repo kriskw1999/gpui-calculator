@@ -18,6 +18,10 @@ The project is structured as follows:
 - `src/consts`: This module contains constants used in the application.
 - `src/logic`: This module contains the struct that stores and manipulates the calculator state.
 
+## Keyboard Events
+
+The keyboard events are used to handle calculations from the keyboard input, for further details take a look inside ./src/root.rs
+
 ## How to Run
 
 Be sure to have rust installed on your machine. You can install rust by following the instructions on the [official rust website](https://www.rust-lang.org/tools/install).
