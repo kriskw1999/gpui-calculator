@@ -1,5 +1,6 @@
 mod button;
 mod consts;
+mod display;
 mod logic;
 mod root;
 mod styles;

@@ -1,8 +1,14 @@
+use gpui::VisualContext;
+use gpui::{
+    div, rgb, DefiniteLength, FocusHandle, InteractiveElement, IntoElement, KeyDownEvent,
+    ParentElement, Render, Styled, ViewContext,
+};
+
 use crate::button::*;
 use crate::consts::*;
+use crate::display::*;
 use crate::logic::*;
 use crate::styles::*;
-use gpui::*;
 
 pub struct Root {
     pub logic: Logic,
@@ -18,12 +24,8 @@ impl Root {
             focus_handle: cx.focus_handle(),
         }
     }
-}
 
-impl Render for Root {
-    fn render(&mut self, cx: &mut ViewContext<Self>) -> impl IntoElement {
-        let display_value = self.logic.get_display_value();
-
+    fn get_buttons(&self, cx: &mut ViewContext<Self>) -> Vec<Button> {
         let mut buttons = Vec::new();
 
         for button_type in BUTTONS {
@@ -42,13 +44,21 @@ impl Render for Root {
             let button = Button::new(button_type, basis, variant).on_click(cx.listener(
                 move |this, _view, cx| {
                     this.logic.on_button_pressed(button_type);
-
                     cx.notify()
                 },
             ));
 
             buttons.push(button);
         }
+
+        buttons
+    }
+}
+
+impl Render for Root {
+    fn render(&mut self, cx: &mut ViewContext<Self>) -> impl IntoElement {
+        let display_value = self.logic.get_display_value();
+        let buttons = self.get_buttons(cx);
 
         // To accept key stroke events it is necessary to focus the
         // view at the beginning
@@ -58,27 +68,14 @@ impl Render for Root {
             .track_focus(&self.focus_handle)
             .on_key_down(cx.listener(|this, event: &KeyDownEvent, cx| {
                 this.logic.handle_key_input(&event.keystroke.key.as_str());
-
                 cx.notify();
             }))
             .size_full()
             .flex()
             .flex_col()
             .bg(rgb(PAD_COLOR))
-            .text_xl()
-            .text_color(rgb(0xffffff))
-            .child(
-                div()
-                    .bg(rgb(DISPLAY_COLOR))
-                    .text_color(rgb(PRIMARY_COLOR))
-                    .h(DefiniteLength::Fraction(0.2))
-                    .px_8()
-                    .w_full()
-                    .flex()
-                    .items_center()
-                    .justify_end()
-                    .child(format!("{}", display_value)),
-            )
+            .text_lg()
+            .child(cx.new_view(|_cx| Display::new(display_value)))
             .child(
                 div()
                     .flex()
