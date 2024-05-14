@@ -17,10 +17,8 @@ The project is structured as follows:
 - `src/button`: The button component that represents a button on the calculator.
 - `src/consts`: This module contains constants used in the application.
 - `src/logic`: This module contains the struct that stores and manipulates the calculator state.
-
-## Keyboard Events
-
-The keyboard events are used to handle calculations from the keyboard input, for further details take a look inside ./src/root.rs
+- `src/style`: This module contains the style for the calculator components.
+- `src/display`: This module contains the display component that shows the input and output of the calculator.
 
 ## How to Run
 
