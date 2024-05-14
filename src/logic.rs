@@ -18,7 +18,7 @@ pub enum ButtonType {
 }
 
 pub struct Logic {
-    pub first_value: f64,
+    first_value: f64,
     second_value: Option<f64>,
     operation: Option<Operation>,
     use_comma: bool,
@@ -58,6 +58,21 @@ impl Logic {
         self.second_value.unwrap_or(self.first_value)
     }
 
+    pub fn on_button_pressed(&mut self, button_type: ButtonType) {
+        match button_type {
+            ButtonType::Number(num) => self.add_number(num),
+            ButtonType::Equal => self.get_result(),
+            ButtonType::Reset => self.set_result(0.0),
+            ButtonType::Percent => self.change_current_value(&|n| n / 100.0),
+            ButtonType::Comma => self.use_comma = true,
+            ButtonType::Sign => self.change_current_value(&|n| n * -1.0),
+            ButtonType::Aritmethic(operation) => {
+                self.use_comma = false;
+                self.operation = Some(operation)
+            }
+        }
+    }
+
     fn append_digit(&self, value: f64, digit: u8) -> f64 {
         let digit_str = digit.to_string();
         let mut value_str = value.to_string();
@@ -78,29 +93,14 @@ impl Logic {
         self.set_result(f(self.get_display_value()));
     }
 
-    pub fn on_button_pressed(&mut self, button_type: ButtonType) {
-        match button_type {
-            ButtonType::Number(num) => self.add_number(num),
-            ButtonType::Equal => self.get_result(),
-            ButtonType::Reset => self.set_result(0.0),
-            ButtonType::Percent => self.change_current_value(&|n| n / 100.0),
-            ButtonType::Comma => self.use_comma = true,
-            ButtonType::Sign => self.change_current_value(&|n| n * -1.0),
-            ButtonType::Aritmethic(operation) => {
-                self.use_comma = false;
-                self.operation = Some(operation)
-            }
-        }
-    }
-
-    pub fn set_result(&mut self, n: f64) {
+    fn set_result(&mut self, n: f64) {
         self.first_value = n;
         self.second_value = None;
         self.operation = None;
         self.use_comma = n % 1.0 != 0.0;
     }
 
-    pub fn get_result(&mut self) {
+    fn get_result(&mut self) {
         if let (Some(op), Some(second_value)) = (self.operation, self.second_value) {
             let result = match op {
                 Operation::Plus => self.first_value + second_value,

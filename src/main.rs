@@ -5,6 +5,9 @@ mod logic;
 mod root;
 mod styles;
 
+#[cfg(test)]
+mod logic_test;
+
 use gpui::*;
 use root::*;
 
