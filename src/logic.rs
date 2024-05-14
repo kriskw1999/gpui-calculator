@@ -34,6 +34,26 @@ impl Logic {
         }
     }
 
+    pub fn handle_key_input(&mut self, key_input: &str) {
+        if let Ok(num) = key_input.parse::<u8>() {
+            self.on_button_pressed(ButtonType::Number(num))
+        } else {
+            match key_input {
+                "/" => self.on_button_pressed(ButtonType::Aritmethic(Operation::Division)),
+                "*" => self.on_button_pressed(ButtonType::Aritmethic(Operation::Times)),
+                "-" => self.on_button_pressed(ButtonType::Aritmethic(Operation::Minus)),
+                "+" => self.on_button_pressed(ButtonType::Aritmethic(Operation::Plus)),
+                "enter" => self.on_button_pressed(ButtonType::Equal),
+                "=" => self.on_button_pressed(ButtonType::Equal),
+                "," => self.on_button_pressed(ButtonType::Comma),
+                "." => self.on_button_pressed(ButtonType::Comma),
+                "%" => self.on_button_pressed(ButtonType::Percent),
+                "backspace" => self.on_button_pressed(ButtonType::Reset),
+                _ => {}
+            }
+        }
+    }
+
     pub fn get_display_value(&self) -> f64 {
         self.second_value.unwrap_or(self.first_value)
     }

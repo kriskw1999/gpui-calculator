@@ -2,6 +2,7 @@ mod button;
 mod consts;
 mod logic;
 mod root;
+mod styles;
 
 use gpui::*;
 use root::*;

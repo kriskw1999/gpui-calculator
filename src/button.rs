@@ -1,11 +1,26 @@
 use crate::logic::*;
+use crate::styles::*;
 use gpui::*;
+
+pub enum ButtonVariant {
+    Primary,
+    Secondary,
+    Neutral,
+}
+
+struct ButtonStyle {
+    bg: u32,
+    text_color: u32,
+    hover_color: u32,
+}
 
 #[derive(IntoElement)]
 pub struct Button {
     on_click: Box<dyn Fn(&MouseDownEvent, &mut WindowContext) + 'static>,
     base: Div,
     text: String,
+    basis: f32,
+    variant: ButtonVariant,
 }
 
 impl Button {
@@ -17,9 +32,29 @@ impl Button {
         self
     }
 
-    pub fn get_label(button_type: &ButtonType) -> String {
+    fn get_variant_style(&self) -> ButtonStyle {
+        match self.variant {
+            ButtonVariant::Neutral => ButtonStyle {
+                bg: PAD_COLOR,
+                text_color: WHITE_COLOR,
+                hover_color: BUTTON_COLOR_HOVER,
+            },
+            ButtonVariant::Primary => ButtonStyle {
+                bg: PRIMARY_COLOR,
+                text_color: WHITE_COLOR,
+                hover_color: PRIMARY_DARK,
+            },
+            ButtonVariant::Secondary => ButtonStyle {
+                bg: BUTTON_COLOR,
+                text_color: PRIMARY_COLOR,
+                hover_color: BUTTON_COLOR_HOVER,
+            },
+        }
+    }
+
+    fn get_label(button_type: &ButtonType) -> String {
         match button_type {
-            ButtonType::Reset => "AC".to_owned(),
+            ButtonType::Reset => "C".to_owned(),
             ButtonType::Sign => "+/-".to_owned(),
             ButtonType::Percent => "%".to_owned(),
             ButtonType::Aritmethic(Operation::Division) => "/".to_owned(),
@@ -34,27 +69,31 @@ impl Button {
 }
 
 impl Button {
-    pub fn new(button_type: ButtonType) -> Self {
+    pub fn new(button_type: ButtonType, basis: f32, variant: ButtonVariant) -> Self {
         Self {
             on_click: Box::new(|_event, _cx| {}),
             base: div(),
-            text: Self::get_label(&button_type).to_owned(),
+            text: Self::get_label(&button_type),
+            basis,
+            variant,
         }
     }
 }
 
 impl RenderOnce for Button {
     fn render(self, _cx: &mut WindowContext) -> impl IntoElement {
+        let style = self.get_variant_style();
+
         self.base
             .w_full()
             .cursor_pointer()
             .h(DefiniteLength::Fraction(0.176))
-            .bg(rgb(0x7f4f24))
-            .text_color(rgb(0xffe6a7))
-            .hover(|this| this.bg(rgb(0x936639)))
-            .flex_basis(DefiniteLength::Fraction(0.225))
+            .bg(rgb(style.bg))
+            .text_color(rgb(style.text_color))
+            .hover(|this| this.bg(rgb(style.hover_color)))
+            .flex_basis(DefiniteLength::Fraction(self.basis))
             .flex()
-            .rounded_2xl()
+            .rounded_lg()
             .items_center()
             .justify_center()
             .child(self.text)
