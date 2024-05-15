@@ -25,7 +25,6 @@ The project is structured as follows:
 Be sure to have rust installed on your machine. You can install rust by following the instructions on the [official rust website](https://www.rust-lang.org/tools/install).
 
 ```bash
-cargo fetch
 cargo run
 ```
 
