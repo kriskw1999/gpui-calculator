@@ -26,7 +26,7 @@ fn main() {
 
         cx.open_window(
             WindowOptions {
-                bounds: Some(bounds),
+                window_bounds: Some(WindowBounds::Windowed(bounds)),
                 ..Default::default()
             },
             |cx| cx.new_view(|cx| Root::new(cx)),
