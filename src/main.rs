@@ -19,12 +19,12 @@ fn main() {
         cx.on_action(|_: &Quit, cx| cx.quit());
         cx.bind_keys([KeyBinding::new("cmd-q", Quit, None)]);
         cx.set_menus(vec![Menu {
-            name: "Calculator",
+            name: "Calculator".into(),
             items: vec![MenuItem::action("Quit", Quit)],
         }]);
         let bounds = Bounds::centered(None, size(px(300.0), px(300.0)), cx);
 
-        cx.open_window(
+        let _ = cx.open_window(
             WindowOptions {
                 window_bounds: Some(WindowBounds::Windowed(bounds)),
                 ..Default::default()
