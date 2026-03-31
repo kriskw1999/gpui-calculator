@@ -8,19 +8,23 @@ mod styles;
 #[cfg(test)]
 mod logic_test;
 
-use gpui::*;
+use gpui::{
+    App, Bounds, KeyBinding, Menu, MenuItem, WindowBounds, WindowOptions, actions, application,
+    prelude::*, px, size,
+};
 use root::*;
 
 actions!(calculator, [Quit]);
 
 fn main() {
-    App::new().run(|cx: &mut AppContext| {
+    application().run(|cx: &mut App| {
         cx.activate(true);
         cx.on_action(|_: &Quit, cx| cx.quit());
-        cx.bind_keys([KeyBinding::new("cmd-q", Quit, None)]);
+        cx.bind_keys([KeyBinding::new("alt-q", Quit, None)]);
         cx.set_menus(vec![Menu {
             name: "Calculator".into(),
             items: vec![MenuItem::action("Quit", Quit)],
+            disabled: false,
         }]);
         let bounds = Bounds::centered(None, size(px(300.0), px(300.0)), cx);
 
@@ -29,7 +33,7 @@ fn main() {
                 window_bounds: Some(WindowBounds::Windowed(bounds)),
                 ..Default::default()
             },
-            |cx| cx.new_view(|cx| Root::new(cx)),
+            |_, cx| cx.new(|cx| Root::new(cx)),
         );
     });
 }

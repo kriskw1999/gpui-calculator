@@ -1,5 +1,5 @@
 use crate::styles::*;
-use gpui::*;
+use gpui::{DefiniteLength, Window, div, prelude::*, rgb};
 
 pub struct Display {
     value: f64,
@@ -12,7 +12,7 @@ impl Display {
 }
 
 impl Render for Display {
-    fn render(&mut self, _cx: &mut ViewContext<Self>) -> impl IntoElement {
+    fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
         div()
             .bg(rgb(DISPLAY_COLOR))
             .text_color(rgb(PRIMARY_COLOR))

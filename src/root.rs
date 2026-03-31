@@ -1,8 +1,4 @@
-use gpui::VisualContext;
-use gpui::{
-    div, rgb, DefiniteLength, FocusHandle, InteractiveElement, IntoElement, KeyDownEvent,
-    ParentElement, Render, Styled, ViewContext,
-};
+use gpui::{DefiniteLength, FocusHandle, Focusable, KeyDownEvent, Window, div, prelude::*, rgb};
 
 use crate::button::*;
 use crate::consts::*;
@@ -14,9 +10,13 @@ pub struct Root {
     pub logic: Logic,
     focus_handle: FocusHandle,
 }
-
+impl Focusable for Root {
+    fn focus_handle(&self, _cx: &gpui::App) -> FocusHandle {
+        self.focus_handle.clone()
+    }
+}
 impl Root {
-    pub fn new(cx: &mut ViewContext<Self>) -> Self {
+    pub fn new(cx: &mut Context<Self>) -> Self {
         let logic = Logic::new();
 
         Self {
@@ -25,7 +25,7 @@ impl Root {
         }
     }
 
-    fn get_buttons(&self, cx: &mut ViewContext<Self>) -> Vec<Button> {
+    fn get_buttons(&self, cx: &mut Context<Self>) -> Vec<Button> {
         let mut buttons = Vec::new();
 
         for button_type in BUTTONS {
@@ -42,7 +42,7 @@ impl Root {
             };
 
             let button = Button::new(button_type, basis, variant).on_click(cx.listener(
-                move |this, _view, cx| {
+                move |this, _, _, cx| {
                     this.logic.on_button_pressed(button_type);
                     cx.notify()
                 },
@@ -56,26 +56,28 @@ impl Root {
 }
 
 impl Render for Root {
-    fn render(&mut self, cx: &mut ViewContext<Self>) -> impl IntoElement {
+    fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let display_value = self.logic.get_display_value();
         let buttons = self.get_buttons(cx);
 
         // To accept key stroke events it is necessary to focus the
         // view at the beginning
-        cx.focus(&self.focus_handle);
+        self.focus_handle(cx).focus(window, cx);
 
         div()
             .track_focus(&self.focus_handle)
-            .on_key_down(cx.listener(|this, event: &KeyDownEvent, cx| {
-                this.logic.handle_key_input(&event.keystroke.key.as_str());
-                cx.notify();
-            }))
+            .on_key_down(
+                cx.listener(|this, event: &KeyDownEvent, _window: &mut Window, cx| {
+                    this.logic.handle_key_input(&event.keystroke.key.as_str());
+                    cx.notify();
+                }),
+            )
             .size_full()
             .flex()
             .flex_col()
             .bg(rgb(PAD_COLOR))
             .text_lg()
-            .child(cx.new_view(|_cx| Display::new(display_value)))
+            .child(cx.new(|_cx| Display::new(display_value)))
             .child(
                 div()
                     .flex()

@@ -1,6 +1,7 @@
+use gpui::{App, DefiniteLength, Div, MouseButton, MouseDownEvent, Window, div, prelude::*, rgb};
+
 use crate::logic::*;
 use crate::styles::*;
-use gpui::*;
 
 pub enum ButtonVariant {
     Primary,
@@ -16,7 +17,7 @@ struct ButtonStyle {
 
 #[derive(IntoElement)]
 pub struct Button {
-    on_click: Box<dyn Fn(&MouseDownEvent, &mut WindowContext) + 'static>,
+    on_click: Box<dyn Fn(&MouseDownEvent, &mut Window, &mut App) + 'static>,
     base: Div,
     text: String,
     basis: f32,
@@ -26,7 +27,7 @@ pub struct Button {
 impl Button {
     pub fn on_click(
         mut self,
-        handler: impl Fn(&MouseDownEvent, &mut WindowContext) + 'static,
+        handler: impl Fn(&MouseDownEvent, &mut Window, &mut App) + 'static,
     ) -> Self {
         self.on_click = Box::new(handler);
         self
@@ -71,7 +72,7 @@ impl Button {
 impl Button {
     pub fn new(button_type: ButtonType, basis: f32, variant: ButtonVariant) -> Self {
         Self {
-            on_click: Box::new(|_event, _cx| {}),
+            on_click: Box::new(|_event, _window, _cx| {}),
             base: div(),
             text: Self::get_label(&button_type),
             basis,
@@ -81,7 +82,7 @@ impl Button {
 }
 
 impl RenderOnce for Button {
-    fn render(self, _cx: &mut WindowContext) -> impl IntoElement {
+    fn render(self, _window: &mut Window, _cx: &mut App) -> impl IntoElement {
         let style = self.get_variant_style();
 
         self.base
@@ -97,8 +98,8 @@ impl RenderOnce for Button {
             .items_center()
             .justify_center()
             .child(self.text)
-            .on_mouse_down(MouseButton::Left, move |event, cx| {
-                (&self.on_click)(event, cx)
+            .on_mouse_down(MouseButton::Left, move |event, window, cx| {
+                (&self.on_click)(event, window, cx)
             })
     }
 }
